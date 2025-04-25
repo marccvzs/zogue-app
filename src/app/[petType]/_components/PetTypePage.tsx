@@ -20,10 +20,10 @@ const PetTypePage = ({ petType }: { petType: string }) => {
   return (
     <div className="min-h-screen p-8">
       <div>
-        <ul className="flex flex-wrap gap-4 justify-center">
+        <ul className="flex flex-wrap gap-8 justify-center">
           {data?.animals?.map((pet: PetCard) => (
-            <li key={pet.id} className="h-full">
-              <Card>
+            <li key={pet.id} className="h-auto hover:scale-110 ease-in-out duration-300">
+              <Card className="h-full shadow-xl bg-primary/10">
                 <CardHeader>
                   <CardTitle>{pet.name}</CardTitle>
                   <CardDescription>
@@ -42,6 +42,7 @@ const PetTypePage = ({ petType }: { petType: string }) => {
                       width: "100%",
                     }}
                     priority
+                    className="rounded-lg"
                   />
                 </CardContent>
               </Card>
