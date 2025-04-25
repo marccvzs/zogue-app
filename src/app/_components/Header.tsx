@@ -8,10 +8,10 @@ import {
 } from "@clerk/nextjs";
 
 const Header = () => (
-  <header className="flex justify-between items-center p-4 gap-4 h-16">
+  <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-xl">
     <div>
       <Link href="/">
-        <h1 className="text-4xl font-semibold">Zogu&euml;</h1>
+        <h1 className="text-4xl font-semibold text-shadow-lg/20">Zogu&euml;</h1>
       </Link>
     </div>
     <SignedIn>
@@ -25,8 +25,10 @@ const Header = () => (
       </nav>
     </SignedIn>
     <SignedOut>
-      <SignInButton />
-      <SignUpButton />
+      <div className="flex gap-2">
+        <SignInButton />
+        <SignUpButton />
+      </div>
     </SignedOut>
     <SignedIn>
       <div className="flex justify-between items-center">

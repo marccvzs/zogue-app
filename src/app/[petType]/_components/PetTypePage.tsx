@@ -22,7 +22,7 @@ const PetTypePage = ({ petType }: { petType: string }) => {
       <div>
         <ul className="flex flex-wrap gap-8 justify-center">
           {data?.animals?.map((pet: PetCard) => (
-            <li key={pet.id} className="h-auto hover:scale-110 ease-in-out duration-300">
+            <li key={pet.id} className="h-auto hover:scale-110 ease-in-out duration-300 cursor-pointer basis-1/5">
               <Card className="h-full shadow-xl bg-primary/10">
                 <CardHeader>
                   <CardTitle>{pet.name}</CardTitle>

@@ -37,6 +37,9 @@ export default function RootLayout({
             <WebVitals />
             <Header />
             {children}
+            <footer className='bg-primary w-full text-center p-4'>
+              <p>Zoguë.app &#169;2025 - All rights reserved</p>
+            </footer>
           </Providers>
         </body>
       </html>
