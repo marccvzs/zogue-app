@@ -15,7 +15,7 @@ export default async function PetPage({ params }: { params: Promise<{ petId: str
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <PetCard petId={petId}/>
+            <PetCard petId={petId} />
         </HydrationBoundary>
     ) 
 }

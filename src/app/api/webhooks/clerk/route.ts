@@ -1,5 +1,5 @@
 import { Webhook } from 'svix';
-import { WebhookEvent } from '@clerk/nextjs/server';
+import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import { db } from '../../../../db';
 import { usersTable } from '../../../../db/schema';
 import { type NextRequest } from 'next/server';
@@ -25,17 +25,11 @@ export async function POST(req: NextRequest) {
     // Create a new Svix instance with your webhook secret
     const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET || '');
 
-    let evt: WebhookEvent;
+    const evt = await verifyWebhook(req);
 
     // Verify the webhook
-    try {
-        evt = wh.verify(body, {
-            'svix-id': svix_id,
-            'svix-timestamp': svix_timestamp,
-            'svix-signature': svix_signature,
-        }) as WebhookEvent;
-    } catch (err) {
-        console.error('Error verifying webhook:', err);
+    if (!evt) {
+        console.error('Error verifying webhook');
         return new Response('Error occurred', {
             status: 400
         });
@@ -60,7 +54,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 await db.insert(usersTable).values({
-                    id,
+                    clerkId: id,
                     email: primaryEmail.email_address,
                     firstName: first_name || null,
                     lastName: last_name || null,
@@ -90,7 +84,7 @@ export async function POST(req: NextRequest) {
                         lastName: last_name || null,
                         imageUrl: image_url || null,
                     })
-                    .where(eq(usersTable.id, id));
+                    .where(eq(usersTable.clerkId, id));
 
                 return new Response('User updated', { status: 200 });
             }
@@ -102,7 +96,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No user ID provided', { status: 400 });
                 }
 
-                await db.delete(usersTable).where(eq(usersTable.id, id));
+                await db.delete(usersTable).where(eq(usersTable.clerkId, id));
                 return new Response('User deleted', { status: 200 });
             }
 

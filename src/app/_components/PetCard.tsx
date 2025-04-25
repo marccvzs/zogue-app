@@ -2,15 +2,24 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { petIdOptions } from "@/app/queries/petId";
+import { notFound } from "next/navigation";
+import { CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 const PetCard = ({ petId }: { petId: string }) => {
     const { data } = useSuspenseQuery(petIdOptions(petId))
 
-    console.log('[+] data: ', data);
+    if (!data || !data.animal) notFound();
 
+    const pet = data?.animal;
+    console.log('[+] pet: ', pet);
     return (
         <div>
-            <h1 className="text-2xl text-white font-bold">{data?.animal?.name}</h1>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{pet.name}</CardTitle>
+                </CardHeader>
+            </Card>
         </div>
     )
 };

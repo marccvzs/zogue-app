@@ -2,7 +2,8 @@ import { pgTable, text, timestamp, varchar, serial } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const usersTable = pgTable('users', {
-    id: text('id').primaryKey(), // Clerk user ID
+    id: serial('id').primaryKey(),
+    clerkId: text('clerk_id').notNull().unique(), // Clerk user ID
     email: varchar('email', { length: 255 }).notNull().unique(),
     firstName: text('first_name'),
     lastName: text('last_name'),
@@ -34,3 +35,13 @@ export const petsRelations = relations(petsTable, ({ one }) => ({
         references: [usersTable.id],
     }),
 }));
+
+export const eventsTable = pgTable('events', {
+    id: serial('id').primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    venue: varchar('venue', { length: 255 }),
+    location: varchar('location', { length: 255 }).notNull(),
+    eventType: varchar('event_type', { length: 255 }).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
