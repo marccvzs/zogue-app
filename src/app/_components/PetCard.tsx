@@ -13,6 +13,7 @@ const PetCard = ({ petId }: { petId: string }) => {
 
     const pet = data?.animal;
     console.log('[+] pet: ', pet);
+
     return (
         <div>
             <Card>

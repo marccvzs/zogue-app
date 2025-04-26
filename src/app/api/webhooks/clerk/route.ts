@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 await db.insert(usersTable).values({
-                    clerkId: id,
+                    id: id,
                     email: primaryEmail.email_address,
                     firstName: first_name || null,
                     lastName: last_name || null,
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
                         lastName: last_name || null,
                         imageUrl: image_url || null,
                     })
-                    .where(eq(usersTable.clerkId, id));
+                    .where(eq(usersTable.id, id));
 
                 return new Response('User updated', { status: 200 });
             }
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No user ID provided', { status: 400 });
                 }
 
-                await db.delete(usersTable).where(eq(usersTable.clerkId, id));
+                await db.delete(usersTable).where(eq(usersTable.id, id));
                 return new Response('User deleted', { status: 200 });
             }
 

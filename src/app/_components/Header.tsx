@@ -8,7 +8,7 @@ import {
 } from "@clerk/nextjs";
 
 const Header = () => (
-  <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-xl">
+  <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-xl text-white">
     <div>
       <Link href="/">
         <h1 className="text-4xl font-semibold text-shadow-lg/20">Zogu&euml;</h1>
@@ -16,9 +16,9 @@ const Header = () => (
     </div>
     <SignedIn>
       <nav>
-        <ul className="flex gap-2">
-          <li>Events</li>
-          <li>Pets</li>
+        <ul className="flex gap-8 font-semibold">
+          <li><Link href="/events">Events</Link></li>
+          <li><Link href="/pets">Pets</Link></li>
           <li>Timeline</li>
           <li>Messages</li>
         </ul>

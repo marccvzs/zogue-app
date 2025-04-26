@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { petTypeSearchOptions } from "../queries/petTypeSearch";
+import { petTypeSearchOptions } from "../../queries/petTypeSearch";
 import PetTypePage from "./_components/PetTypePage";
 
 const Page = async ({ params }: { params: Promise<{ petType: string }>}) => {
