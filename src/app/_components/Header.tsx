@@ -25,8 +25,8 @@ const Header = () => (
       </nav>
     </SignedIn>
     <SignedOut>
-      <div className="flex gap-2">
-        <SignInButton />
+      <div className="flex gap-2 font-semibold">
+        <SignInButton>Log In</SignInButton>
         <SignUpButton />
       </div>
     </SignedOut>
