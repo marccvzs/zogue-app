@@ -1,4 +1,3 @@
-import { Webhook } from 'svix';
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import { db } from '../../../../db';
 import { usersTable } from '../../../../db/schema';
@@ -17,13 +16,6 @@ export async function POST(req: NextRequest) {
             status: 400
         });
     }
-
-    // Get the body
-    const payload = await req.json();
-    const body = JSON.stringify(payload);
-
-    // Create a new Svix instance with your webhook secret
-    const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET || '');
 
     const evt = await verifyWebhook(req);
 
@@ -56,7 +48,7 @@ export async function POST(req: NextRequest) {
                 await db.insert(usersTable).values({
                     id: id,
                     email: primaryEmail.email_address,
-                    firstName: first_name || null,
+                    firstName: first_name!,
                     lastName: last_name || null,
                     imageUrl: image_url || null,
                 });
@@ -80,7 +72,7 @@ export async function POST(req: NextRequest) {
                 await db.update(usersTable)
                     .set({
                         email: primaryEmail.email_address,
-                        firstName: first_name || null,
+                        firstName: first_name!,
                         lastName: last_name || null,
                         imageUrl: image_url || null,
                     })

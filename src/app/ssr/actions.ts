@@ -1,18 +1,17 @@
 'use server';
-/* eslint-disable */
 import { createServerSupabaseClient } from './client';
 
 export async function addTask(name: string) {
     const client = createServerSupabaseClient();
 
     try {
-        const response = await client.from('tasks').insert({
+        const response = await client.from('pets').insert({
             name,
         })
 
-        console.log('Task successfully added!', response);
+        console.log('Pet successfully added!', response);
     } catch (error: any) {
-        console.error('Error adding task: ', error.message);
-        throw new Error('Failed to add task');
+        console.error('Error adding pet: ', error.message);
+        throw new Error('Failed to add pet');
     }
 };
