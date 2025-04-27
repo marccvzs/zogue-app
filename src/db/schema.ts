@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, varchar, integer, serial } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, varchar, integer, serial, primaryKey } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const usersTable = pgTable('users', {
@@ -48,6 +48,26 @@ export const eventsTable = pgTable('events', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export const usersToEvents = pgTable(
+    'users_to_events', {
+        userId: text('user_id').notNull().references(() => usersTable.id),
+        eventId: integer('event_id').notNull().references(() => eventsTable.id),
+    },
+    (t) => [
+        primaryKey({ columns: [t.userId, t.eventId] })
+    ],
+);
+
+export const usersToEventsRelations = relations(usersToEvents, ({ one }) => ({ event: one(eventsTable, {
+    fields: [usersToEvents.eventId],
+    references: [eventsTable.id],
+}),
+user: one(usersTable, {
+    fields: [usersToEvents.userId],
+    references: [usersTable.id],
+}),
+}));
 
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;

@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
-import { Geist, Geist_Mono } from "next/font/google";
+import { Comfortaa, ABeeZee } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/_components/Header";
 import Providers from "@/app/providers";
 import { WebVitals } from '@/app/_components/web-vitals';
+import Footer from "./_components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const comfortaaSans = Comfortaa({
+  variable: "--font-comfortaa-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const aBeeZee = ABeeZee({
+  weight: '400',
+  variable: "--font-abeezee-mono",
   subsets: ["latin"],
 });
 
@@ -30,16 +32,14 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${comfortaaSans.variable} ${aBeeZee.variable} antialiased`}
         >
           <Providers>
             {/* @ts-ignore */}
             <WebVitals />
             <Header />
             {children}
-            <footer className='bg-primary w-full text-center p-4'>
-              <p>Zoguë.app &#169;2025 - All rights reserved</p>
-            </footer>
+            <Footer />
           </Providers>
         </body>
       </html>
