@@ -1,7 +1,7 @@
 'use server';
 import { createServerSupabaseClient } from './client';
 
-export async function addTask(name: string) {
+export async function addPet(name: string) {
     const client = createServerSupabaseClient();
 
     try {
