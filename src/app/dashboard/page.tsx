@@ -1,4 +1,5 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import AddPet from './_components/AddPet';
 
 const DashboardPage = async () => {
     const { userId } = await auth();
@@ -12,7 +13,10 @@ const DashboardPage = async () => {
     return (
         <div className="p-8 min-h-screen">
             <div>
-                <h3>{`Welcome ${user?.firstName}!`}</h3>
+                <h3>Welcome <span className="text-2xl font-semibold">{user?.firstName}</span></h3>
+            </div>
+            <div>
+                <AddPet />
             </div>
         </div>
     )

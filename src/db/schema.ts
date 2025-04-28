@@ -28,7 +28,9 @@ export const petsTable = pgTable("pets", {
   name: varchar("name", { length: 100 }).notNull(),
   type: varchar("type", { length: 100 }).notNull(), // e.g., 'dog', 'cat', etc.
   breed: varchar("breed", { length: 100 }),
+  gender: varchar("gender", { length: 20 }),
   birthDate: timestamp("birth_date"),
+  age: integer("age"),
   userId: text("user_id")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
@@ -36,14 +38,36 @@ export const petsTable = pgTable("pets", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const fostersTable = pgTable("fosters", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: varchar("type", { length: 100 }).notNull(),
+  breed: varchar("breed", { length: 20 }),
+  size: varchar("size", { length: 10 }),
+  status: varchar("status", { length: 15 }),
+  organization: varchar("org", { length: 100 }),
+  age: integer("age"),
+  userId: text("user_id").references(() => usersTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+})
+
 // Define the relationships
 export const usersRelations = relations(usersTable, ({ many }) => ({
   pets: many(petsTable),
+  fosters: many(fostersTable)
 }));
 
 export const petsRelations = relations(petsTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [petsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+export const fostersRelations = relations(fostersTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [fostersTable.userId],
     references: [usersTable.id],
   }),
 }));

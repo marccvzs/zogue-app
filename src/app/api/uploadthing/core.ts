@@ -1,9 +1,8 @@
+import { auth } from '@clerk/nextjs/server';
 import { createUploadthing, type FileRouter } from 'uploadthing/server';
 import { UploadThingError } from 'uploadthing/server';
 
 const f = createUploadthing();
-
-const auth = (req: Request) => ({ id: 'fakeid' });
 
 export const ourFileRouter = {
     imageUploader: f({
@@ -12,12 +11,12 @@ export const ourFileRouter = {
             maxFileCount: 1,
         },
     })
-    .middleware(async ({ req }) => {
-        const user = await auth(req);
+    .middleware(async () => {
+        const { userId } = await auth();
 
-        if (!user) throw new UploadThingError('Unauthorized');
+        if (!userId) throw new UploadThingError('Unauthorized');
 
-        return { userId: user.id };
+        return { userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
         console.log('Upload complete for userId: ', metadata.userId);
