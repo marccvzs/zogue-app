@@ -5,7 +5,7 @@ const EventsPage = async (props: {
 
   return (
     <div className="min-h-screen bg-slate-200 p-8">
-      Events Page {searchParams.zipCode ? `in ${searchParams.zipCode}` : ""}
+      Events {searchParams.zipCode ? `near ${searchParams.zipCode}` : ""}
     </div>
   );
 };

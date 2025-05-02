@@ -41,7 +41,6 @@ const AddPetForm = () => {
             <div className="flex flex-col gap-2 pb-2">
               <Label htmlFor="name">Name</Label>
               <Input
-                id="name"
                 name="name"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
@@ -56,7 +55,6 @@ const AddPetForm = () => {
             <div className="flex flex-col gap-2 pb-2">
               <Label htmlFor="age">Age</Label>
               <Input
-                id="age"
                 name="age"
                 type="number"
                 value={field.state.value}
@@ -72,7 +70,6 @@ const AddPetForm = () => {
             <div className="flex flex-col gap-2 pb-2">
               <Label htmlFor="breed">Primary Breed</Label>
               <Input
-                id="breed"
                 name="breed"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}

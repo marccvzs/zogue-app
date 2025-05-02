@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from '@clerk/nextjs/server';
 import {
     ServerValidateError,
     createServerValidate,
@@ -20,17 +21,29 @@ export default async function addPetAction(prev: unknown, formData: FormData) {
     try {
         const validatedData = await serverValidate(formData);
         const client = createServerSupabaseClient();
-        
+
         try {
+            const { userId } = await auth();
+
+            if (!userId) {
+                throw new Error('You must be signed in to add a pet');
+            }
+
             const response = await client.from('pets').insert({
                 name: validatedData.name,
                 age: validatedData.age,
                 breed: validatedData.breed,
                 type: validatedData.type,
-                userId: validatedData.userId
+                user_id: userId
             });
             
-            console.log('Pet successfully added!', response);
+            if (response.status === 201) {
+                console.log('Pet successfully added!', response);
+            } else {
+                console.error('Error adding pet: ', response);
+
+                throw new Error('Failed to add pet');
+            }
         } catch (error: any) {
             console.error('Error adding pet: ', error.message);
 

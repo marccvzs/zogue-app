@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import AddPet from './_components/AddPet';
+import { OrganizationSwitcher } from '@clerk/nextjs';
 
 const DashboardPage = async () => {
     const { userId } = await auth();
@@ -12,8 +13,9 @@ const DashboardPage = async () => {
 
     return (
         <div className="p-8 min-h-screen">
-            <div>
+            <div className="flex justify-between">
                 <h3>Welcome <span className="text-2xl font-semibold">{user?.firstName}</span></h3>
+                <OrganizationSwitcher />
             </div>
             <div>
                 <AddPet />

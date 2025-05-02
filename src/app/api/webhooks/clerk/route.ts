@@ -1,6 +1,6 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import { db } from '../../../../db';
-import { usersTable } from '../../../../db/schema';
+import { usersTable, orgsTable } from '../../../../db/schema';
 import { type NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 
@@ -89,7 +89,53 @@ export async function POST(req: NextRequest) {
                 }
 
                 await db.delete(usersTable).where(eq(usersTable.id, id));
+
                 return new Response('User deleted', { status: 200 });
+            }
+
+            case 'organization.created': {
+                const { id, name, slug, image_url } = evt.data;
+
+                if (!id) {
+                    return new Response('No org ID provided', { status: 400 });
+                }
+
+                await db.insert(orgsTable).values({
+                    id: id,
+                    name: name,
+                    slug: slug,
+                    logo: image_url
+                });
+
+                return new Response('Org created', { status: 200 });
+            }
+
+            case 'organization.updated': {
+                const { id, name, slug, image_url } = evt.data;
+
+                if (!id) {
+                    return new Response('No org ID provided', { status: 400 });
+                }
+
+                await db.update(orgsTable).set({
+                    name: name,
+                    slug: slug,
+                    logo: image_url
+                });
+
+                return new Response('Org updated', { status: 200 });
+            }
+
+            case 'organization.deleted': {
+                const { id } = evt.data;
+
+                if (!id) {
+                    return new Response('No org ID provided', { status: 400 });
+                }
+
+                await db.delete(orgsTable).where(eq(orgsTable.id, id));
+
+                return new Response('Org deleted', { status: 200 });
             }
 
             default:

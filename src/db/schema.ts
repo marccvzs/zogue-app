@@ -8,7 +8,7 @@ import {
   primaryKey,
   boolean,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
   id: text("id").primaryKey(),
@@ -47,15 +47,19 @@ export const fostersTable = pgTable("fosters", {
   status: varchar("status", { length: 15 }),
   organization: varchar("org", { length: 100 }),
   age: integer("age"),
-  userId: text("user_id").references(() => usersTable.id, { onDelete: "cascade" }),
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull()
-})
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 // Define the relationships
 export const usersRelations = relations(usersTable, ({ many }) => ({
   pets: many(petsTable),
-  fosters: many(fostersTable)
+  fosters: many(fostersTable),
+  usersToEvents: many(usersToEvents),
+  usersToOrgs: many(usersToOrgs),
 }));
 
 export const petsRelations = relations(petsTable, ({ one }) => ({
@@ -81,6 +85,8 @@ export const eventsTable = pgTable("events", {
   state: varchar("state", { length: 25 }),
   zipCode: integer("zip_code").notNull(),
   eventType: varchar("event_type", { length: 255 }).notNull(),
+  logo: text("logo"),
+  images: text("images").default(sql`'{}'::text[]`),
   description: varchar("description", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -110,6 +116,42 @@ export const usersToEventsRelations = relations(usersToEvents, ({ one }) => ({
   }),
 }));
 
+export const orgsTable = pgTable("organizations", {
+  id: text("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: varchar("type", { length: 50 }),
+  slug: varchar("slug", { length: 25 }),
+  logo: varchar("logo", { length: 100 }),
+});
+
+export const orgsRelations = relations(orgsTable, ({ many }) => ({
+  userToOrgs: many(usersToOrgs),
+}));
+
+export const usersToOrgs = pgTable(
+  "users_to_orgs",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => usersTable.id),
+    orgId: text("org_id")
+      .notNull()
+      .references(() => orgsTable.id),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.orgId] })]
+);
+
+export const usersToOrgsRelations = relations(usersToOrgs, ({ one }) => ({
+  org: one(orgsTable, {
+    fields: [usersToOrgs.orgId],
+    references: [orgsTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [usersToOrgs.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
 
@@ -118,3 +160,6 @@ export type SelectPet = typeof petsTable.$inferSelect;
 
 export type InsertEvent = typeof eventsTable.$inferInsert;
 export type SelectEvent = typeof eventsTable.$inferSelect;
+
+export type InsertOrg = typeof orgsTable.$inferInsert;
+export type SelectOrg = typeof orgsTable.$inferSelect;

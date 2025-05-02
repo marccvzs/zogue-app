@@ -6,6 +6,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 const Header = () => (
   <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-xl text-white">
@@ -26,7 +27,7 @@ const Header = () => (
     </SignedIn>
     <SignedOut>
       <div className="flex gap-2 font-semibold">
-        <SignInButton>Log In</SignInButton>
+        <SignInButton><Button>Log In</Button></SignInButton>
         <SignUpButton />
       </div>
     </SignedOut>
