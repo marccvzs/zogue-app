@@ -7,17 +7,29 @@ import {
   serial,
   primaryKey,
   boolean,
+  date,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
+
+export const petType = pgEnum("pet_type", [
+  "dog",
+  "cat",
+  "bird",
+  "rabbit",
+  "other",
+]);
+export const eventType = pgEnum("event_type", ["adoption", "social", "other"]);
 
 export const usersTable = pgTable("users", {
   id: text("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name"),
-  registeredAsFoster: boolean("registered_as_foster"),
-  contactable: boolean("contactable"),
+  registeredAsFoster: boolean("registered_as_foster").default(false),
+  contactable: boolean("contactable").default(false),
   imageUrl: text("image_url"),
+  associated_user_id: text("associated_user_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -26,10 +38,10 @@ export const usersTable = pgTable("users", {
 export const petsTable = pgTable("pets", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
-  type: varchar("type", { length: 100 }).notNull(), // e.g., 'dog', 'cat', etc.
+  petType: petType("pet_type").notNull(),
   breed: varchar("breed", { length: 100 }),
   gender: varchar("gender", { length: 20 }),
-  birthDate: timestamp("birth_date"),
+  birthDate: date("birth_date"),
   age: integer("age"),
   userId: text("user_id")
     .notNull()
@@ -55,11 +67,15 @@ export const fostersTable = pgTable("fosters", {
 });
 
 // Define the relationships
-export const usersRelations = relations(usersTable, ({ many }) => ({
+export const usersRelations = relations(usersTable, ({ one, many }) => ({
   pets: many(petsTable),
   fosters: many(fostersTable),
   usersToEvents: many(usersToEvents),
   usersToOrgs: many(usersToOrgs),
+  associatedUser: one(usersTable, {
+    fields: [usersTable.associated_user_id], 
+    references: [usersTable.id]
+  })
 }));
 
 export const petsRelations = relations(petsTable, ({ one }) => ({
@@ -84,7 +100,7 @@ export const eventsTable = pgTable("events", {
   city: varchar("city", { length: 50 }),
   state: varchar("state", { length: 25 }),
   zipCode: integer("zip_code").notNull(),
-  eventType: varchar("event_type", { length: 255 }).notNull(),
+  eventType: eventType("event_type"),
   logo: text("logo"),
   images: text("images").default(sql`'{}'::text[]`),
   description: varchar("description", { length: 255 }),

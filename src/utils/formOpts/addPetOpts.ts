@@ -7,7 +7,7 @@ export const addPetOpts = formOptions({
         petType: '',
         breed: '',
         birthDate: '',
-        images: [''],
+        image: '',
         userId: '',
     },
 });
