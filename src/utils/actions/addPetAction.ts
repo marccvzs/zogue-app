@@ -33,21 +33,17 @@ export default async function addPetAction(prev: unknown, formData: FormData) {
                 name: validatedData.name,
                 age: validatedData.age,
                 breed: validatedData.breed,
-                type: validatedData.type,
+                pet_type: validatedData.petType,
                 user_id: userId
             });
-            
+
             if (response.status === 201) {
                 console.log('Pet successfully added!', response);
-            } else {
-                console.error('Error adding pet: ', response);
-
-                throw new Error('Failed to add pet');
             }
         } catch (error: any) {
             console.error('Error adding pet: ', error.message);
 
-            throw new Error('Failed to add pet');
+            throw new Error('Failed to add pet', error);
         }
     } catch (e) {
         if (e instanceof ServerValidateError) {

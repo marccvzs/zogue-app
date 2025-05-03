@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const Header = () => (
-  <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-xl text-white">
+  <header className="flex justify-between items-center p-4 gap-4 h-16 sticky top-0 bg-primary shadow-md  text-white">
     <div>
       <Link href="/">
         <h1 className="text-4xl font-semibold text-shadow-lg/20 tracking-tight text-pastel-yellow">Zogu&euml;</h1>

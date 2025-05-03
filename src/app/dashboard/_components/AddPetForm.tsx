@@ -78,12 +78,12 @@ const AddPetForm = () => {
           );
         }}
       </form.Field>
-      <form.Field name="type">
+      <form.Field name="petType">
         {(field) => {
           return (
             <div className="flex flex-col gap-2 pb-2">
-              <Label htmlFor="type">Pet Type</Label>
-              <Select onValueChange={field.handleChange} name="type">
+              <Label htmlFor="petType">Pet Type</Label>
+              <Select onValueChange={field.handleChange} name="petType">
                 <SelectTrigger>
                   <SelectValue placeholder="Select a pet type" />
                 </SelectTrigger>

@@ -4,7 +4,7 @@ export const addPetOpts = formOptions({
     defaultValues: {
         name: '',
         age: 0,
-        type: '',
+        petType: '',
         breed: '',
         birthDate: '',
         images: [''],
