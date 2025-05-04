@@ -1,5 +1,4 @@
 import {
-  pgTable,
   text,
   timestamp,
   varchar,
@@ -8,20 +7,28 @@ import {
   primaryKey,
   boolean,
   date,
-  pgEnum,
+  time,
+  pgSchema,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
-export const petType = pgEnum("pet_type", [
+export const api = pgSchema("api");
+
+export const petType = api.enum("pet_type", [
   "dog",
   "cat",
   "bird",
   "rabbit",
   "other",
 ]);
-export const eventType = pgEnum("event_type", ["adoption", "social", "other"]);
 
-export const usersTable = pgTable("users", {
+export const eventType = api.enum("event_type", [
+  "adoption",
+  "social",
+  "other",
+]);
+
+export const users = api.table("users", {
   id: text("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   firstName: text("first_name").notNull(),
@@ -35,7 +42,7 @@ export const usersTable = pgTable("users", {
 });
 
 // Define the pets table
-export const petsTable = pgTable("pets", {
+export const pets = api.table("pets", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   petType: petType("pet_type").notNull(),
@@ -45,12 +52,12 @@ export const petsTable = pgTable("pets", {
   age: integer("age"),
   userId: text("user_id")
     .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const fostersTable = pgTable("fosters", {
+export const fosters = api.table("fosters", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   type: varchar("type", { length: 100 }).notNull(),
@@ -59,7 +66,7 @@ export const fostersTable = pgTable("fosters", {
   status: varchar("status", { length: 15 }),
   organization: varchar("org", { length: 100 }),
   age: integer("age"),
-  userId: text("user_id").references(() => usersTable.id, {
+  userId: text("user_id").references(() => users.id, {
     onDelete: "cascade",
   }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -67,32 +74,33 @@ export const fostersTable = pgTable("fosters", {
 });
 
 // Define the relationships
-export const usersRelations = relations(usersTable, ({ one, many }) => ({
-  pets: many(petsTable),
-  fosters: many(fostersTable),
+export const usersRelations = relations(users, ({ one, many }) => ({
+  pets: many(pets),
+  fosters: many(fosters),
   usersToEvents: many(usersToEvents),
   usersToOrgs: many(usersToOrgs),
-  associatedUser: one(usersTable, {
-    fields: [usersTable.associated_user_id], 
-    references: [usersTable.id]
-  })
+  associatedUser: one(users, {
+    fields: [users.associated_user_id],
+    references: [users.id],
+  }),
+  calendar: many(calendarTable),
 }));
 
-export const petsRelations = relations(petsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [petsTable.userId],
-    references: [usersTable.id],
+export const petsRelations = relations(pets, ({ one }) => ({
+  user: one(users, {
+    fields: [pets.userId],
+    references: [users.id],
   }),
 }));
 
-export const fostersRelations = relations(fostersTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [fostersTable.userId],
-    references: [usersTable.id],
+export const fostersRelations = relations(fosters, ({ one }) => ({
+  user: one(users, {
+    fields: [fosters.userId],
+    references: [users.id],
   }),
 }));
 
-export const eventsTable = pgTable("events", {
+export const events = api.table("events", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   venue: varchar("venue", { length: 255 }),
@@ -108,31 +116,31 @@ export const eventsTable = pgTable("events", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const usersToEvents = pgTable(
+export const usersToEvents = api.table(
   "users_to_events",
   {
     userId: text("user_id")
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => users.id),
     eventId: integer("event_id")
       .notNull()
-      .references(() => eventsTable.id),
+      .references(() => events.id),
   },
   (t) => [primaryKey({ columns: [t.userId, t.eventId] })]
 );
 
 export const usersToEventsRelations = relations(usersToEvents, ({ one }) => ({
-  event: one(eventsTable, {
+  event: one(events, {
     fields: [usersToEvents.eventId],
-    references: [eventsTable.id],
+    references: [events.id],
   }),
-  user: one(usersTable, {
+  user: one(users, {
     fields: [usersToEvents.userId],
-    references: [usersTable.id],
+    references: [users.id],
   }),
 }));
 
-export const orgsTable = pgTable("organizations", {
+export const orgs = api.table("organizations", {
   id: text("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   type: varchar("type", { length: 50 }),
@@ -140,42 +148,62 @@ export const orgsTable = pgTable("organizations", {
   logo: varchar("logo", { length: 100 }),
 });
 
-export const orgsRelations = relations(orgsTable, ({ many }) => ({
+export const orgsRelations = relations(orgs, ({ many }) => ({
   userToOrgs: many(usersToOrgs),
 }));
 
-export const usersToOrgs = pgTable(
+export const usersToOrgs = api.table(
   "users_to_orgs",
   {
     userId: text("user_id")
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => users.id),
     orgId: text("org_id")
       .notNull()
-      .references(() => orgsTable.id),
+      .references(() => orgs.id),
   },
   (t) => [primaryKey({ columns: [t.userId, t.orgId] })]
 );
 
 export const usersToOrgsRelations = relations(usersToOrgs, ({ one }) => ({
-  org: one(orgsTable, {
+  org: one(orgs, {
     fields: [usersToOrgs.orgId],
-    references: [orgsTable.id],
+    references: [orgs.id],
   }),
-  user: one(usersTable, {
+  user: one(users, {
     fields: [usersToOrgs.userId],
-    references: [usersTable.id],
+    references: [users.id],
   }),
 }));
 
-export type InsertUser = typeof usersTable.$inferInsert;
-export type SelectUser = typeof usersTable.$inferSelect;
+export const calendarTable = api.table("calendar", {
+  id: serial("id").primaryKey(),
+  dateOf: date("date_of").notNull(),
+  time: time("time").notNull(),
+  title: text("text").notNull(),
+  location: varchar("location", { length: 100 }),
+  user_id: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export type InsertPet = typeof petsTable.$inferInsert;
-export type SelectPet = typeof petsTable.$inferSelect;
+export const calendarRelations = relations(calendarTable, ({ one }) => ({
+  user: one(users, {
+    fields: [calendarTable.user_id],
+    references: [users.id],
+  }),
+}));
 
-export type InsertEvent = typeof eventsTable.$inferInsert;
-export type SelectEvent = typeof eventsTable.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;
 
-export type InsertOrg = typeof orgsTable.$inferInsert;
-export type SelectOrg = typeof orgsTable.$inferSelect;
+export type InsertPet = typeof pets.$inferInsert;
+export type SelectPet = typeof pets.$inferSelect;
+
+export type InsertEvent = typeof events.$inferInsert;
+export type SelectEvent = typeof events.$inferSelect;
+
+export type InsertOrg = typeof orgs.$inferInsert;
+export type SelectOrg = typeof orgs.$inferSelect;

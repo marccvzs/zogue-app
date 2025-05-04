@@ -1,3 +1,4 @@
 [auth.third_party.clerk]
 enabled = true
 domain = "https://light-tomcat-37.clerk.accounts.dev"
+db_pool = 15
