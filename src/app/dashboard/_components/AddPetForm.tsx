@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Image from 'next/image';
 import { initialFormState } from "@tanstack/react-form/nextjs";
 import {
   mergeForm,
@@ -13,8 +14,16 @@ import { addPetOpts } from "@/utils/formOpts/addPetOpts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectTrigger, SelectValue, SelectGroup, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
 import { UploadButton } from "@/utils/uploadthing";
+import { toast } from "sonner";
 
 const AddPetForm = () => {
   const [state, action] = useActionState(addPetAction, initialFormState);
@@ -78,36 +87,54 @@ const AddPetForm = () => {
           );
         }}
       </form.Field>
-      <form.Field name="type">
+      <form.Field name="petType">
         {(field) => {
           return (
             <div className="flex flex-col gap-2 pb-2">
-              <Label htmlFor="type">Pet Type</Label>
-              <Select onValueChange={field.handleChange} name="type">
+              <Label htmlFor="petType">Pet Type</Label>
+              <Select onValueChange={field.handleChange} name="petType">
                 <SelectTrigger>
                   <SelectValue placeholder="Select a pet type" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectGroup>
-                        <SelectItem value="dog">Dog</SelectItem>
-                        <SelectItem value="cat">Cat</SelectItem>
-                        <SelectItem value="bird">Bird</SelectItem>
-                        <SelectItem value="pig">Rabbit</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                    </SelectGroup>
+                  <SelectGroup>
+                    <SelectItem value="dog">Dog</SelectItem>
+                    <SelectItem value="cat">Cat</SelectItem>
+                    <SelectItem value="bird">Bird</SelectItem>
+                    <SelectItem value="pig">Rabbit</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
           );
         }}
       </form.Field>
-      <form.Field name="images">
+      <form.Field name="image">
         {(field) => {
-            return (
-                <div className="flex flex-col gap-2 pb-2">
-                    <UploadButton endpoint="imageUploader" />
-                </div>
-            )
+          return (
+            <div className="flex flex-col gap-2 pb-2 items-center">
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  console.log("Uploaded file: ", res);
+                  field.handleChange(res[0].ufsUrl);
+                  toast("Upload Completed");
+                }}
+                onUploadError={(error: Error) => {
+                  toast(`Error! ${error.message}`);
+                }}
+              />
+              {field.state.value && (
+                <Image
+                  src={field.state.value}
+                  alt="Preview"
+                  height={100}
+                  width={100}
+                />
+              )}
+            </div>
+          );
         }}
       </form.Field>
       <form.Subscribe

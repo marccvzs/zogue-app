@@ -6,6 +6,7 @@ import Header from "@/app/_components/Header";
 import Providers from "@/app/providers";
 import { WebVitals } from '@/app/_components/web-vitals';
 import Footer from "./_components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const comfortaaSans = Comfortaa({
   variable: "--font-comfortaa-sans",
@@ -38,7 +39,10 @@ export default function RootLayout({
             {/* @ts-ignore */}
             <WebVitals />
             <Header />
-            {children}
+            <main>
+              {children}
+            </main>
+            <Toaster />
             <Footer />
           </Providers>
         </body>

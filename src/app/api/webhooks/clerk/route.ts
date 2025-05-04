@@ -1,6 +1,6 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
-import { db } from '../../../../db';
-import { usersTable, orgsTable } from '../../../../db/schema';
+import { db } from '@/db';
+import { users, orgs } from '@/db/schema';
 import { type NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No primary email found', { status: 400 });
                 }
 
-                await db.insert(usersTable).values({
+                await db.insert(users).values({
                     id: id,
                     email: primaryEmail.email_address,
                     firstName: first_name!,
@@ -69,14 +69,14 @@ export async function POST(req: NextRequest) {
                     return new Response('No primary email found', { status: 400 });
                 }
 
-                await db.update(usersTable)
+                await db.update(users)
                     .set({
                         email: primaryEmail.email_address,
                         firstName: first_name!,
                         lastName: last_name || null,
                         imageUrl: image_url || null,
                     })
-                    .where(eq(usersTable.id, id));
+                    .where(eq(users.id, id));
 
                 return new Response('User updated', { status: 200 });
             }
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No user ID provided', { status: 400 });
                 }
 
-                await db.delete(usersTable).where(eq(usersTable.id, id));
+                await db.delete(users).where(eq(users.id, id));
 
                 return new Response('User deleted', { status: 200 });
             }
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No org ID provided', { status: 400 });
                 }
 
-                await db.insert(orgsTable).values({
+                await db.insert(orgs).values({
                     id: id,
                     name: name,
                     slug: slug,
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No org ID provided', { status: 400 });
                 }
 
-                await db.update(orgsTable).set({
+                await db.update(orgs).set({
                     name: name,
                     slug: slug,
                     logo: image_url
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
                     return new Response('No org ID provided', { status: 400 });
                 }
 
-                await db.delete(orgsTable).where(eq(orgsTable.id, id));
+                await db.delete(orgs).where(eq(orgs.id, id));
 
                 return new Response('Org deleted', { status: 200 });
             }
