@@ -36,7 +36,7 @@ export const users = api.table("users", {
   registeredAsFoster: boolean("registered_as_foster").default(false),
   contactable: boolean("contactable").default(false),
   imageUrl: text("image_url"),
-  associated_user_id: text("associated_user_id"),
+  associated_user_id: text("associated_user_id").unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -53,6 +53,10 @@ export const pets = api.table("pets", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  associatedUserId: text("associated_user_id").references(
+    () => users.associated_user_id,
+    { onDelete: "cascade" }
+  ),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -69,6 +73,10 @@ export const fosters = api.table("fosters", {
   userId: text("user_id").references(() => users.id, {
     onDelete: "cascade",
   }),
+  associatedUser: text("associated_user_id").references(
+    () => users.associated_user_id,
+    { onDelete: "cascade" }
+  ),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -83,7 +91,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     fields: [users.associated_user_id],
     references: [users.id],
   }),
-  calendar: many(calendarTable),
+  calendar: many(calendar),
 }));
 
 export const petsRelations = relations(pets, ({ one }) => ({
@@ -91,12 +99,20 @@ export const petsRelations = relations(pets, ({ one }) => ({
     fields: [pets.userId],
     references: [users.id],
   }),
+  associatedUser: one(users, {
+    fields: [pets.associatedUserId],
+    references: [users.associated_user_id],
+  }),
 }));
 
 export const fostersRelations = relations(fosters, ({ one }) => ({
   user: one(users, {
     fields: [fosters.userId],
     references: [users.id],
+  }),
+  associatedUser: one(users, {
+    fields: [fosters.associatedUser],
+    references: [users.associated_user_id],
   }),
 }));
 
@@ -176,7 +192,7 @@ export const usersToOrgsRelations = relations(usersToOrgs, ({ one }) => ({
   }),
 }));
 
-export const calendarTable = api.table("calendar", {
+export const calendar = api.table("calendar", {
   id: serial("id").primaryKey(),
   dateOf: date("date_of").notNull(),
   time: time("time").notNull(),
@@ -185,14 +201,22 @@ export const calendarTable = api.table("calendar", {
   user_id: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  associatedUser: text("associated_user_id").references(
+    () => users.associated_user_id,
+    { onDelete: "cascade" }
+  ),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const calendarRelations = relations(calendarTable, ({ one }) => ({
+export const calendarRelations = relations(calendar, ({ one }) => ({
   user: one(users, {
-    fields: [calendarTable.user_id],
+    fields: [calendar.user_id],
     references: [users.id],
+  }),
+  associatedUser: one(users, {
+    fields: [calendar.associatedUser],
+    references: [users.associated_user_id],
   }),
 }));
 
@@ -202,8 +226,14 @@ export type SelectUser = typeof users.$inferSelect;
 export type InsertPet = typeof pets.$inferInsert;
 export type SelectPet = typeof pets.$inferSelect;
 
+export type InsertFoster = typeof fosters.$inferInsert;
+export type SelectFoster = typeof fosters.$inferSelect;
+
 export type InsertEvent = typeof events.$inferInsert;
 export type SelectEvent = typeof events.$inferSelect;
 
 export type InsertOrg = typeof orgs.$inferInsert;
 export type SelectOrg = typeof orgs.$inferSelect;
+
+export type InsertCalendar = typeof calendar.$inferInsert;
+export type SelectCalendar = typeof calendar.$inferSelect;

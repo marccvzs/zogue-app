@@ -1,7 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import AddPet from './_components/AddPet';
 import { OrganizationSwitcher } from '@clerk/nextjs';
-import Image from 'next/image';
+import { createServerSupabaseClient } from '../ssr/client';
 
 const DashboardPage = async () => {
     const { userId } = await auth();
@@ -9,6 +9,10 @@ const DashboardPage = async () => {
     if (!userId) {
         return <div>Sign in to view this page</div>
     }
+
+    const client = createServerSupabaseClient();
+
+    const { data, error } = await client.from('pets').select().eq('user_id', userId);
 
     const user = await currentUser();
 

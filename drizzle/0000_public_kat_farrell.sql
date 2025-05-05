@@ -1,7 +1,5 @@
-CREATE SCHEMA "api";
+CREATE SCHEMA IF NOT EXISTS "api";
 --> statement-breakpoint
-CREATE TYPE "api"."event_type" AS ENUM('adoption', 'social', 'other');--> statement-breakpoint
-CREATE TYPE "api"."pet_type" AS ENUM('dog', 'cat', 'bird', 'rabbit', 'other');--> statement-breakpoint
 CREATE TABLE "api"."calendar" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"date_of" date NOT NULL,
@@ -9,6 +7,7 @@ CREATE TABLE "api"."calendar" (
 	"text" text NOT NULL,
 	"location" varchar(100),
 	"user_id" text NOT NULL,
+	"associated_user_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -39,6 +38,7 @@ CREATE TABLE "api"."fosters" (
 	"org" varchar(100),
 	"age" integer,
 	"user_id" text,
+	"associated_user_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -60,6 +60,7 @@ CREATE TABLE "api"."pets" (
 	"birth_date" date,
 	"age" integer,
 	"user_id" text NOT NULL,
+	"associated_user_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -75,7 +76,8 @@ CREATE TABLE "api"."users" (
 	"associated_user_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "users_email_unique" UNIQUE("email")
+	CONSTRAINT "users_email_unique" UNIQUE("email"),
+	CONSTRAINT "users_associated_user_id_unique" UNIQUE("associated_user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "api"."users_to_events" (
@@ -91,8 +93,11 @@ CREATE TABLE "api"."users_to_orgs" (
 );
 --> statement-breakpoint
 ALTER TABLE "api"."calendar" ADD CONSTRAINT "calendar_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "api"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "api"."calendar" ADD CONSTRAINT "calendar_associated_user_id_users_associated_user_id_fk" FOREIGN KEY ("associated_user_id") REFERENCES "api"."users"("associated_user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api"."fosters" ADD CONSTRAINT "fosters_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "api"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "api"."fosters" ADD CONSTRAINT "fosters_associated_user_id_users_associated_user_id_fk" FOREIGN KEY ("associated_user_id") REFERENCES "api"."users"("associated_user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api"."pets" ADD CONSTRAINT "pets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "api"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "api"."pets" ADD CONSTRAINT "pets_associated_user_id_users_associated_user_id_fk" FOREIGN KEY ("associated_user_id") REFERENCES "api"."users"("associated_user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api"."users_to_events" ADD CONSTRAINT "users_to_events_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "api"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api"."users_to_events" ADD CONSTRAINT "users_to_events_event_id_events_id_fk" FOREIGN KEY ("event_id") REFERENCES "api"."events"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api"."users_to_orgs" ADD CONSTRAINT "users_to_orgs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "api"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
