@@ -15,16 +15,18 @@ const Header = () => (
         <h1 className="text-4xl font-semibold text-shadow-lg/20 tracking-tight text-pastel-yellow">Zogu&euml;</h1>
       </Link>
     </div>
-    <SignedIn>
-      <nav>
-        <ul className="flex gap-8 font-semibold">
-          <li><Link href="/events">Events</Link></li>
-          <li><Link href="/pets">Pets</Link></li>
-          <li>Timeline</li>
-          <li>Messages</li>
-        </ul>
-      </nav>
-    </SignedIn>
+    <div className="hidden md:block">
+      <SignedIn>
+        <nav>
+          <ul className="flex gap-8 font-semibold">
+            <li><Link href="/events">Events</Link></li>
+            <li><Link href="/pets">Pets</Link></li>
+            <li>Timeline</li>
+            <li>Messages</li>
+          </ul>
+        </nav>
+      </SignedIn>
+    </div>
     <SignedOut>
       <div className="flex gap-2 font-semibold">
         <SignInButton><Button>Log In</Button></SignInButton>
