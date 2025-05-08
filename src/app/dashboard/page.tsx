@@ -3,6 +3,7 @@ import AddPet from './_components/AddPet';
 import { OrganizationSwitcher } from '@clerk/nextjs';
 import { createServerSupabaseClient } from '../ssr/client';
 import AppointmentCalendar from '../_components/AppointmentCalendar';
+import { Dog } from 'lucide-react';
 
 const DashboardPage = async () => {
     const { userId } = await auth();
@@ -24,7 +25,10 @@ const DashboardPage = async () => {
                 <OrganizationSwitcher />
             </div>
             <div className="bg-pastel-blue rounded-lg p-4 shadow-lg">
-                <AddPet />
+                <div className="border w-fit p-4 flex flex-col items-center bg-slate-200 rounded-lg">
+                    <AddPet />
+                    <Dog />
+                </div>
             </div>
             <div className="bg-stone-200 rounded-lg p-4 w-fit shadow-lg">
                 <AppointmentCalendar />

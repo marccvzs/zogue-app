@@ -7,6 +7,8 @@ import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -23,12 +25,15 @@ const AppointmentCalendar = () => {
     <div className="flex flex-col gap-2">
       <div className="flex">
         <Dialog>
-          <DialogTrigger className="outline p-1 rounded-lg hover:bg-accent hover:cursor-pointer">
+          <DialogTrigger className="outline p-1 rounded-lg hover:bg-accent hover:cursor-pointer" asChild>
             <Plus />
           </DialogTrigger>
           <DialogContent>
-            <DialogTitle>Create New Appointment</DialogTitle>
-            <p>{selectedDate ? selectedDate?.toString() : new Date().toString()}</p>
+            <DialogHeader>
+              <DialogTitle>Create New Appointment</DialogTitle>
+              <DialogDescription>Add a new appointment for your pet to your calendar</DialogDescription>
+            </DialogHeader>
+            <p>{selectedDate ? selectedDate?.toDateString() : new Date().toDateString()}</p>
             <AddCalendarEventForm selectedDate={selectedDate || new Date()} />
           </DialogContent>
         </Dialog>

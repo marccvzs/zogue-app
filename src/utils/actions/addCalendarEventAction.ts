@@ -16,9 +16,8 @@ const serverValidate = createServerValidate({
 
 export default async function addCalendarEventAction(prev: unknown, formData: FormData, selectedDate: Date) {
     try {
-        console.log('[+] formData: ', formData, selectedDate);
         const validatedData = await serverValidate(formData);
-
+        
         const client = createServerSupabaseClient();
 
         try {
@@ -29,11 +28,12 @@ export default async function addCalendarEventAction(prev: unknown, formData: Fo
             }
 
             const response = await client.from('calendar').insert({
-                dateOf: selectedDate,
+                date_of: selectedDate,
                 time: validatedData.time,
                 title: validatedData.title,
                 location: validatedData.location,
-                apptType: validatedData.apptType
+                appt_type: validatedData.apptType,
+                user_id: userId
             });
 
             console.log('[+] response: ', response);

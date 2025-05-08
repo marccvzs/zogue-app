@@ -202,9 +202,9 @@ export const calendar = api.table("calendar", {
   id: serial("id").primaryKey(),
   dateOf: date("date_of").notNull(),
   time: time("time").notNull(),
-  title: text("text").notNull(),
+  title: text("title").notNull(),
   location: varchar("location", { length: 100 }),
-  apptType: apptType('apt_type').default("vet"),
+  apptType: apptType('appt_type').default("vet"),
   user_id: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),

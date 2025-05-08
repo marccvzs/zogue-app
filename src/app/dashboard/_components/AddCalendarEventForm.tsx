@@ -13,7 +13,14 @@ import addCalendarEventAction from "@/utils/actions/addCalendarEventAction";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+} from "@/components/ui/select";
 import { SelectValue } from "@radix-ui/react-select";
 
 const AddCalendarEventForm = ({ selectedDate }: { selectedDate: Date }) => {
@@ -51,23 +58,39 @@ const AddCalendarEventForm = ({ selectedDate }: { selectedDate: Date }) => {
       </form.Field>
       <form.Field name="apptType">
         {(field) => {
-            return (
-                <div className="flex flex-col gap-2">
-                    <Select>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Appointment Type"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Appointment</SelectLabel>
-                                <SelectItem value="vet">Vet</SelectItem>
-                                <SelectItem value="social">Social</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-            )
+          return (
+            <div className="flex flex-col gap-2">
+              <Select onValueChange={field.handleChange} name="apptType">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an Appointment Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Appointment</SelectLabel>
+                    <SelectItem value="vet">Vet</SelectItem>
+                    <SelectItem value="social">Social</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          );
+        }}
+      </form.Field>
+      <form.Field name="time">
+        {(field) => {
+          return (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="time">Time</Label>
+              <Input
+                type="time"
+                name="time"
+                className="w-fit"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            </div>
+          );
         }}
       </form.Field>
       <form.Field name="location">
@@ -84,17 +107,7 @@ const AddCalendarEventForm = ({ selectedDate }: { selectedDate: Date }) => {
           );
         }}
       </form.Field>
-      <form.Field name="time">
-        {(field) => {
-            console.log('[+] field: ', field);
-          return (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="time">Time</Label>
-              <Input type="time" className="w-fit" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
-            </div>
-          );
-        }}
-      </form.Field>
+
       <form.Subscribe
         selector={(formState) => [formState.canSubmit, formState.isSubmitting]}
       >
