@@ -28,6 +28,12 @@ export const eventType = api.enum("event_type", [
   "other",
 ]);
 
+export const apptType = api.enum("appt_type", [
+  "vet",
+  "social",
+  "other"
+])
+
 export const users = api.table("users", {
   id: text("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
@@ -196,8 +202,9 @@ export const calendar = api.table("calendar", {
   id: serial("id").primaryKey(),
   dateOf: date("date_of").notNull(),
   time: time("time").notNull(),
-  title: text("text").notNull(),
+  title: text("title").notNull(),
   location: varchar("location", { length: 100 }),
+  apptType: apptType('appt_type').default("vet"),
   user_id: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -219,6 +226,13 @@ export const calendarRelations = relations(calendar, ({ one }) => ({
     references: [users.associated_user_id],
   }),
 }));
+
+export const petImages = api.table('pet_images', {
+  id: serial('id').primaryKey(),
+  url: text('image_url').notNull(),
+  user_id: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  pet_id: integer('pet_id').references(() => pets.id, { onDelete: 'cascade' })
+});
 
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;

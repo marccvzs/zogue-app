@@ -21,6 +21,7 @@ import {
   SelectValue,
   SelectGroup,
   SelectItem,
+  SelectLabel,
 } from "@/components/ui/select";
 import { UploadButton } from "@/utils/uploadthing";
 import { toast } from "sonner";
@@ -91,12 +92,12 @@ const AddPetForm = () => {
         {(field) => {
           return (
             <div className="flex flex-col gap-2 pb-2">
-              <Label htmlFor="petType">Pet Type</Label>
               <Select onValueChange={field.handleChange} name="petType">
                 <SelectTrigger>
                   <SelectValue placeholder="Select a pet type" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectLabel>Pet Type</SelectLabel>
                   <SelectGroup>
                     <SelectItem value="dog">Dog</SelectItem>
                     <SelectItem value="cat">Cat</SelectItem>

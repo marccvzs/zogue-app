@@ -1,0 +1,1 @@
+ALTER TABLE "api"."calendar" RENAME COLUMN "text" TO "title";

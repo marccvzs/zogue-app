@@ -1,0 +1,1 @@
+ALTER TABLE "api"."calendar" RENAME COLUMN "apt_type" TO "appt_type";
