@@ -39,7 +39,7 @@ const AppointmentCalendar = () => {
         </Dialog>
       </div>
       <Calendar
-        modifiers={{ booked: [new Date(2025, 4, 8), new Date(2025, 4, 20)] }}
+        modifiers={{ booked: [new Date(2025, 4, 12), new Date(2025, 4, 20)] }}
         modifiersClassNames={{
           booked: "bg-red-400 rounded-full!",
           selected: "bg-pastel-yellow",
